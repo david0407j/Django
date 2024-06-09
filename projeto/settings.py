@@ -16,6 +16,8 @@ import os
 from pathlib import Path
 from decouple import config, Csv
 import dj_database_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +33,9 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+
+AUTH_USER_MODEL = 'base.User'
+
 
 
 # Application definition
@@ -57,6 +62,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'projeto.urls'
+
+# configuração Debug Tollbar
+
+INTERNAL_IPS = config('INTERNAL_IPS', cast=Csv(), default='127.0.0.1')
+
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 TEMPLATES = [
     {
@@ -173,3 +186,10 @@ if AWS_ACCESS_KEY_ID:
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+SENTRY_DSN = config('SENTRY_DSN', default=None)
+if SENTRY_DSN:
+    sentry_sdk.init(dsn=SENTRY_DSN, integrations=[DjangoIntegration()])
