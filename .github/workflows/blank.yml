@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - main 
+      - main
   pull_request:
     branches:
-      - main 
+      - main
 
 jobs:
   build:
@@ -26,24 +26,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v3
         with:
           python-version: 3.11
-          architecture: x64
+
       - name: Copiar Configurações .env
-        run: |
-          cp contrib/env-sample .env
+        run: cp contrib/env-sample .env
+
       - name: Instalar dependências
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
+
       - name: Rodar flake8
         run: flake8 .
+
       - name: Rodar Testes Automáticos
-        run: |
-          pytest --cov=pypro
+        run: pytest --cov=pypro
+
       - name: Relatório Coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          codecov
+        run: codecov
