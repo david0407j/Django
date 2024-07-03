@@ -42,7 +42,7 @@ jobs:
         run: flake8 .
 
       - name: Rodar Testes Automáticos
-        run: pytest --cov=pypro
+        run: pytest --cov=projeto
 
       - name: Relatório Coverage
         env:
